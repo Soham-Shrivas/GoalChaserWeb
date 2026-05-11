@@ -286,9 +286,11 @@ export default function GoalChaser() {
   }
 
   async function loadSessions(userId: string) {
-    const q = query(collection(db, 'sessions'), where('userId', '==', userId), orderBy('startTime', 'desc'), limit(100))
+    const q = query(collection(db, 'sessions'), where('userId', '==', userId), limit(100))
     const snapshot = await getDocs(q)
-    setSessions(snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Session)))
+    const allSessions = snapshot.docs.map(d => ({ id: d.id, ...d.data() } as Session))
+    allSessions.sort((a, b) => b.startTime - a.startTime)
+    setSessions(allSessions)
   }
 
   async function loadFriends(userId: string) {
